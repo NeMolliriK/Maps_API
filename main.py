@@ -52,14 +52,17 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         return lx, ly
 
     def search(self):
-        self.lon, self.lat = map(float, get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de"
-                                            f"7710b&geocode={self.lineEdit.text()}&format=json").json()["response"][
-            "GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].split())
+        g = get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode="
+                f"{self.lineEdit.text()}&format=json").json()["response"]["GeoObjectCollection"]["featureMember"][0][
+            "GeoObject"]
+        self.lon, self.lat = map(float, g["Point"]["pos"].split())
         self.pt += [f'{self.lon},{self.lat}']
+        self.lineEdit_2.setText(g["metaDataProperty"]["GeocoderMetaData"]["text"])
         self.overwrite_image()
 
     def remove_last_label(self):
         self.pt = self.pt[:-1]
+        self.lineEdit_2.clear()
         self.overwrite_image()
 
     def change_type(self):
