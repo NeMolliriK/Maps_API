@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Большая задача по Maps API."))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Большая задача по Maps API"))
         self.pushButton.setText(_translate("MainWindow", "Схема"))
         self.pushButton_2.setText(_translate("MainWindow", "Спутник"))
         self.pushButton_3.setText(_translate("MainWindow", "Гибрид"))

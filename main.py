@@ -33,6 +33,9 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.change_type)
         self.pushButton_2.clicked.connect(self.change_type)
         self.pushButton_3.clicked.connect(self.change_type)
+        self.pushButton.setFocusPolicy(Qt.NoFocus)
+        self.pushButton_2.setFocusPolicy(Qt.NoFocus)
+        self.pushButton_3.setFocusPolicy(Qt.NoFocus)
         self.overwrite_image()
 
     def overwrite_image(self):
@@ -57,13 +60,13 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.z += 1
         elif event.key() == Qt.Key_PageDown and self.z > 0:
             self.z -= 1
-        elif event.key() == Qt.Key_A:
+        elif event.key() == Qt.Key_Left:
             self.lon -= LON_STEP * math.pow(2, 15 - self.z)
-        elif event.key() == Qt.Key_D:
+        elif event.key() == Qt.Key_Right:
             self.lon += LON_STEP * math.pow(2, 15 - self.z)
-        elif event.key() == Qt.Key_W:
+        elif event.key() == Qt.Key_Up:
             self.lat += LAT_STEP * math.pow(2, 15 - self.z)
-        elif event.key() == Qt.Key_S:
+        elif event.key() == Qt.Key_Down:
             self.lat -= LAT_STEP * math.pow(2, 15 - self.z)
         if self.lon > 180:
             self.lon -= 360
