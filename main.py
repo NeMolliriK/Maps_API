@@ -30,18 +30,17 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.lon = 37.620070
         self.lat = 55.753630
         self.type = "sat,skl"
+        self.pt = []
         self.pushButton.clicked.connect(self.change_type)
         self.pushButton_2.clicked.connect(self.change_type)
         self.pushButton_3.clicked.connect(self.change_type)
-        self.pushButton.setFocusPolicy(Qt.NoFocus)
-        self.pushButton_2.setFocusPolicy(Qt.NoFocus)
-        self.pushButton_3.setFocusPolicy(Qt.NoFocus)
+        self.pushButton_4.clicked.connect(self.search)
         self.overwrite_image()
 
     def overwrite_image(self):
         open("map.png", "wb").write(
             get(f"http://static-maps.yandex.ru/1.x/?ll={','.join(map(str, [self.lon, self.lat]))}&z={self.z}&l="
-                f"{self.type}").content)
+                f"{self.type}{'&pt=' if self.pt else ''}{'~'.join(self.pt)}").content)
         self.label.setPixmap(QPixmap("map.png"))
 
     def screen_to_geo(self, pos):
@@ -50,6 +49,13 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         lx = self.lon + dx * 0.0000428 * math.pow(2, 15 - self.zoom)
         ly = self.lat + dy * 0.0000428 * math.cos(math.radians(self.lat)) * math.pow(2, 15 - self.zoom)
         return lx, ly
+
+    def search(self):
+        self.lon, self.lat = map(float, get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de"
+                                            f"7710b&geocode={self.lineEdit.text()}&format=json").json()["response"][
+            "GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].split())
+        self.pt += [f'{self.lon},{self.lat}']
+        self.overwrite_image()
 
     def change_type(self):
         self.type = MAP_TYPES[self.sender().text()]
@@ -87,8 +93,8 @@ def except_hook(cls, exception, traceback):
 
 
 if __name__ == '__main__':
-    LAT_STEP = 0.008
-    LON_STEP = 0.01938
+    LAT_STEP = 0.01085
+    LON_STEP = 0.01933
     MAP_TYPES = {"Схема": "map", "Спутник": "sat", "Гибрид": "sat,skl"}
     app = QApplication(sys.argv)
     form = MyMainWindow()
