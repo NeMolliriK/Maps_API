@@ -34,7 +34,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
     def overwrite_image(self):
         open("map.png", "wb").write(
             get(f"http://static-maps.yandex.ru/1.x/?ll={','.join(map(str, [self.lon, self.lat]))}&z={self.z}&l=sat,skl")
-            .content)
+                .content)
         self.label.setPixmap(QPixmap("map.png"))
 
     def screen_to_geo(self, pos):
@@ -53,14 +53,18 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             self.lon -= LON_STEP * math.pow(2, 15 - self.z)
         elif event.key() == Qt.Key_Right:
             self.lon += LON_STEP * math.pow(2, 15 - self.z)
-        elif event.key() == Qt.Key_Up and self.lat < 85:
+        elif event.key() == Qt.Key_Up:
             self.lat += LAT_STEP * math.pow(2, 15 - self.z)
-        elif event.key() == Qt.Key_Down and self.lat > -85:
+        elif event.key() == Qt.Key_Down:
             self.lat -= LAT_STEP * math.pow(2, 15 - self.z)
         if self.lon > 180:
             self.lon -= 360
-        if self.lon < -180:
+        elif self.lon < -180:
             self.lon += 360
+        if self.lat > 85:
+            self.lat -= 170
+        elif self.lat < -85:
+            self.lat += 170
         self.overwrite_image()
 
     def closeEvent(self, event):
