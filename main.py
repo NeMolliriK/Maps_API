@@ -35,6 +35,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_2.clicked.connect(self.change_type)
         self.pushButton_3.clicked.connect(self.change_type)
         self.pushButton_4.clicked.connect(self.search)
+        self.pushButton_5.clicked.connect(self.remove_last_label)
         self.overwrite_image()
 
     def overwrite_image(self):
@@ -55,6 +56,10 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
                                             f"7710b&geocode={self.lineEdit.text()}&format=json").json()["response"][
             "GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].split())
         self.pt += [f'{self.lon},{self.lat}']
+        self.overwrite_image()
+
+    def remove_last_label(self):
+        self.pt = self.pt[:-1]
         self.overwrite_image()
 
     def change_type(self):
