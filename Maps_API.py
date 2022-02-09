@@ -24,6 +24,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(0, 200, 450, 450))
+        self.label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label.setText("")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
