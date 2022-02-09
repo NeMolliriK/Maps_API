@@ -36,6 +36,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.change_type)
         self.pushButton_4.clicked.connect(self.search)
         self.pushButton_5.clicked.connect(self.remove_last_label)
+        self.checkBox.stateChanged.connect(self.update_full_address)
         self.overwrite_image()
 
     def overwrite_image(self):
@@ -57,12 +58,24 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             "GeoObject"]
         self.lon, self.lat = map(float, g["Point"]["pos"].split())
         self.pt += [f'{self.lon},{self.lat}']
-        self.lineEdit_2.setText(g["metaDataProperty"]["GeocoderMetaData"]["text"])
+        g = g["metaDataProperty"]["GeocoderMetaData"]
+        self.lineEdit_2.setText(g["text"] + (f' {g["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
         self.overwrite_image()
+
+    def update_full_address(self):
+        g = get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode="
+                f"{self.lineEdit.text()}&format=json").json()["response"]["GeoObjectCollection"]["featureMember"][0][
+            "GeoObject"]["metaDataProperty"]["GeocoderMetaData"]
+        try:
+            self.lineEdit_2.setText(
+                g["text"] + (f' {g["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
+        except KeyError:
+            pass
 
     def remove_last_label(self):
         self.pt = self.pt[:-1]
         self.lineEdit_2.clear()
+        self.lineEdit.clear()
         self.overwrite_image()
 
     def change_type(self):
