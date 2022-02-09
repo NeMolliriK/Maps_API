@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>730</height>
+    <height>770</height>
    </rect>
   </property>
   <property name="font">
@@ -27,7 +27,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>200</y>
+      <y>240</y>
       <width>450</width>
       <height>450</height>
      </rect>
@@ -46,7 +46,7 @@
     <property name="geometry">
      <rect>
       <x>-1</x>
-      <y>650</y>
+      <y>690</y>
       <width>451</width>
       <height>51</height>
      </rect>
@@ -146,9 +146,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>150</y>
+      <y>190</y>
       <width>450</width>
-      <height>50</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="cursor">
@@ -173,6 +173,28 @@
     <property name="text">
      <string>Приписывать почтовый индекс к полному адресу</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>140</y>
+      <width>451</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Тип организации:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_3"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

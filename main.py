@@ -41,6 +41,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_4.clicked.connect(self.search)
         self.pushButton_5.clicked.connect(self.remove_last_label)
         self.checkBox.stateChanged.connect(self.update_full_address)
+        self.o = 0
         self.overwrite_image()
 
     def overwrite_image(self):
@@ -70,6 +71,29 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             except KeyError:
                 self.lineEdit_2.setText(g["text"])
             self.overwrite_image()
+        elif event.button() == Qt.RightButton and 199 < event.y() < 651:
+            c = ','.join(map(str, self.screen_to_geo((event.x(), event.y()))))
+            try:
+                g = get(f'https://search-maps.yandex.ru/v1/?apikey=dda3ddba-c9ea-4ead-9010-f43fbc15c6e3&text='
+                        f'{self.lineEdit_3.text()}&lang=ru_RU&type=biz&ll={c}').json()["features"][0]
+                org_coords = g["geometry"]["coordinates"]
+                if lonlat_distance(org_coords, map(float, c.split(","))) <= 50:
+                    org_coords = ','.join(map(str, org_coords))
+                    response = get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geo"
+                                   f"code={org_coords}&format=json").json()["response"]["GeoObjectCollection"][
+                        "featureMember"][0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]
+                    self.pt += [org_coords]
+                    self.lineEdit.setText(g["properties"]["CompanyMetaData"]["name"])
+                    try:
+                        self.lineEdit_2.setText(
+                            response["text"] + (
+                                f' {response["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
+                    except KeyError:
+                        self.lineEdit_2.setText(response["text"])
+                    self.o = 1
+                    self.overwrite_image()
+            except LookupError:
+                pass
 
     def search(self):
         try:
@@ -81,19 +105,21 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
             g = g["metaDataProperty"]["GeocoderMetaData"]
             self.lineEdit_2.setText(
                 g["text"] + (f' {g["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
+            self.o = 0
             self.overwrite_image()
         except LookupError:
             pass
 
     def update_full_address(self):
-        try:
-            g = get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode="
-                    f"{self.lineEdit.text()}&format=json").json()["response"]["GeoObjectCollection"]["featureMember"][
-                0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]
-            self.lineEdit_2.setText(
-                g["text"] + (f' {g["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
-        except KeyError:
-            pass
+        if self.lineEdit_2.text():
+            try:
+                g = get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode="
+                        f"{self.lineEdit_2.text() if self.o else self.lineEdit.text()}&format=json").json()["response"][
+                    "GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]
+                self.lineEdit_2.setText(
+                    g["text"] + (f' {g["Address"]["postal_code"]}' if self.checkBox.isChecked() else ""))
+            except KeyError:
+                pass
 
     def remove_last_label(self):
         self.pt = self.pt[:-1]
